@@ -90,7 +90,7 @@ class OrdersControllerTest(@Autowired val mockMvc: MockMvc) {
 	}
 
 	@Test
-	fun `Must throw exception with no body`() {
+	fun `Must throw exception without user_id`() {
 
 		val json = "[]"
 		val response = mockMvc
@@ -103,7 +103,7 @@ class OrdersControllerTest(@Autowired val mockMvc: MockMvc) {
 	}
 
 	@Test
-	fun `Must throw exception without user_id`() {
+	fun `Must throw exception with no body`() {
 
 		val response = mockMvc
 				.perform(get(CALCULATIONS).header(USER_ID, USER_ID))

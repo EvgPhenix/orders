@@ -6,6 +6,9 @@ open class BaseEntity {
     open fun calcCost(quantity: Int, totalCost: Int): Int = totalCost
 }
 
+/*
+    each fun calcCost uses logic that calculates total cost of every item with special offer
+ */
 data class Apple(
         override val name: String = "apple",
         override val description: String = "buy one get one free"
