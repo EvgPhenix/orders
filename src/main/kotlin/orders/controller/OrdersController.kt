@@ -1,0 +1,22 @@
+package com.american.express.orders.controller
+
+import com.american.express.orders.model.CalculationResponse
+import com.american.express.orders.service.OrdersService
+import org.springframework.http.MediaType
+import org.springframework.web.bind.annotation.*
+
+@RequestMapping(produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+@RestController
+class OrdersController(private val ordersService: OrdersService) {
+
+    @GetMapping(value = [CALCULATIONS])
+    fun getCalculations(@RequestHeader(USER_ID) userId: String,
+                        @RequestBody calculationRequest: List<String>
+                        ): CalculationResponse =
+            ordersService.getCalc(calculationRequest)
+
+    companion object {
+        const val CALCULATIONS = "/calculations"
+        const val USER_ID = "USER_ID"
+    }
+}
