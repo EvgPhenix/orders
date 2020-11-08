@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.net.ConnectException
 import java.nio.charset.Charset
 
 @SpringBootTest(
@@ -150,6 +151,22 @@ class OrdersControllerTest(@Autowired val mockMvc: MockMvc) {
 				.andDo(print())
 				.andReturn()
 		val expectedResult = "Dear USER_ID! You placed order that contains [{orange=3, apple=2}] and costs \$1.1. Thank you!"
+		assertEquals(response.andReturn().response.getContentAsString(Charset.defaultCharset()), expectedResult)
+	}
+
+	@Test
+	fun `Must place order without sending message whn sender service is down`() {
+		`when`(mailClient.sendMessage(
+				anyString(), anyString(), anyBoolean(), anyString(), anyString())).thenThrow(ConnectException::class.java)
+		val json = "[\"orange\", \"apple\", \"apple\", \"orange\", \"orange\", \"cucumber\"]"
+		val response = mockMvc
+				.perform(post("$ORDERS?mailAddress=my.address@gmail.com").header(USER_ID, USER_ID).contentType(MediaType.APPLICATION_JSON)
+						.content(json))
+		response
+				.andExpect(status().isOk())
+				.andDo(print())
+				.andReturn()
+		val expectedResult = "These goods are out of stock. Please place another order."
 		assertEquals(response.andReturn().response.getContentAsString(Charset.defaultCharset()), expectedResult)
 	}
 

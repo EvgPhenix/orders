@@ -5,10 +5,12 @@ import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
+import java.net.ConnectException
 
 @FeignClient(name = "mail", url = "\${mail.url}")
 interface MailClient {
     @PostMapping("/mails")
+    @Throws(ConnectException::class)
     fun sendMessage(@RequestHeader(USER_ID) userId: String,
                                @RequestParam("mailAddress", defaultValue = true.toString()) mailAddress: String,
                                @RequestParam("isSuccess", defaultValue = true.toString()) isSuccess: Boolean,
