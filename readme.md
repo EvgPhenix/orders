@@ -1,6 +1,6 @@
 # Orders Service
 ### How to build
-- git clone
+- git clone git@github.com:evgPhoenix/orders.git
 - mkdir to service directory
 - ./gradlew build
 - java jar (get jar from build directory)
