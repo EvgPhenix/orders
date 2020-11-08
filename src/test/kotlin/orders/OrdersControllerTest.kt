@@ -1,17 +1,23 @@
 package orders
 
+import orders.client.MailClient
 import orders.controller.OrdersController
 import orders.controller.OrdersController.Companion.CALCULATIONS
+import orders.controller.OrdersController.Companion.ORDERS
 import orders.controller.OrdersController.Companion.USER_ID
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.mockito.Mockito
+import org.mockito.Mockito.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.nio.charset.Charset
@@ -22,6 +28,9 @@ import java.nio.charset.Charset
 )
 @AutoConfigureMockMvc
 class OrdersControllerTest(@Autowired val mockMvc: MockMvc) {
+
+	@MockBean
+	private lateinit var mailClient: MailClient
 
 	@Test
 	fun contextLoads() {
@@ -110,5 +119,39 @@ class OrdersControllerTest(@Autowired val mockMvc: MockMvc) {
 				.andExpect(status().is4xxClientError)
 				.andDo(print())
 				.andReturn()
+	}
+
+	@Test
+	fun `Must place order`() {
+		`when`(mailClient.sendMessage(
+				anyString(), anyString(), anyBoolean(), anyString(), anyString())).thenReturn("Email sent successfully")
+		val json = "[\"orange\", \"apple\", \"apple\", \"orange\", \"orange\", \"cucumber\"]"
+		val response = mockMvc
+				.perform(post("$ORDERS?mailAddress=my.address@gmail.com").header(USER_ID, USER_ID).contentType(MediaType.APPLICATION_JSON)
+						.content(json))
+		response
+				.andExpect(status().isOk())
+				.andDo(print())
+				.andReturn()
+		val expectedResult = "Dear USER_ID! You placed order that contains [{orange=3, apple=2}] and costs \$1.1. We sent you details to my.address@gmail.com"
+		println(response.andReturn().response.getContentAsString(Charset.defaultCharset()))
+		assertEquals(response.andReturn().response.getContentAsString(Charset.defaultCharset()), expectedResult)
+	}
+
+	@Test
+	fun `Must place order without sending message`() {
+		`when`(mailClient.sendMessage(
+				anyString(), anyString(), anyBoolean(), anyString(), anyString())).thenReturn("Email wasn't sent")
+		val json = "[\"orange\", \"apple\", \"apple\", \"orange\", \"orange\", \"cucumber\"]"
+		val response = mockMvc
+				.perform(post("$ORDERS?mailAddress=my.address@gmail.com").header(USER_ID, USER_ID).contentType(MediaType.APPLICATION_JSON)
+						.content(json))
+		response
+				.andExpect(status().isOk())
+				.andDo(print())
+				.andReturn()
+		val expectedResult = "Dear USER_ID! You placed order that contains [{orange=3, apple=2}] and costs \$1.1. Thank you!"
+		println(response.andReturn().response.getContentAsString(Charset.defaultCharset()))
+		assertEquals(response.andReturn().response.getContentAsString(Charset.defaultCharset()), expectedResult)
 	}
 }

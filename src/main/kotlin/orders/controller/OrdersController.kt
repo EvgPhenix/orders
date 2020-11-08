@@ -19,9 +19,17 @@ class OrdersController(private val ordersService: OrdersService) {
                         ): CalculationResponse =
             ordersService.getCalc(calculationRequest)
 
+    @PostMapping(value = [ORDERS])
+    fun placeOrder(@RequestHeader(USER_ID) userId: String,
+                   @RequestParam("mailAddress", defaultValue = true.toString()) mailAddress: String,
+                   @RequestBody calculationRequest: List<String>
+    ): String =
+            ordersService.placeOrder(userId, mailAddress, calculationRequest)
+
     companion object {
         const val OFFERS = "/offers"
         const val CALCULATIONS = "/calculations"
+        const val ORDERS = "/orders"
         const val USER_ID = "USER_ID"
     }
 }

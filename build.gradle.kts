@@ -22,6 +22,9 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-mustache")
 	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.cloud:spring-cloud-commons:2.2.5.RELEASE")
+	implementation("org.springframework.cloud:spring-cloud-context:2.2.5.RELEASE")
+	implementation("org.springframework.cloud:spring-cloud-starter-openfeign:2.2.5.RELEASE")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
@@ -30,7 +33,6 @@ dependencies {
 	kapt("org.springframework.boot:spring-boot-configuration-processor")
 	testImplementation("org.springframework.boot:spring-boot-starter-test") {
 		exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
-		exclude(module = "mockito-core")
 	}
 	testImplementation("org.junit.jupiter:junit-jupiter-api")
 	testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
