@@ -1,4 +1,4 @@
-package com.american.express.orders
+package orders
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

@@ -1,6 +1,6 @@
-package com.american.express.orders.service
+package orders.service
 
-import com.american.express.orders.model.CalculationResponse
+import orders.model.CalculationResponse
 import orders.model.Apple
 import orders.model.Orange
 import org.springframework.stereotype.Service
@@ -14,13 +14,13 @@ class OrdersService {
            CalculationResponse( "$" + getCalculations(calculationRequest) / 100.0)
 
     fun getCalculations(calculationRequest: List<String>): Int {
-        if (calculationRequest.size == 0) return 0
+        if (calculationRequest.isEmpty()) return 0
         return calculationRequest
                 .groupingBy { it }
                 .eachCount()
                 .map { countCost(it) }
-                .map { it.second?: error(0).toInt() }
-                .reduce { sum, element -> sum + element }
+                .map { it.second?: error(0) }
+                .sum()
     }
 
     fun countCost(entry: Map.Entry<String, Int>): Pair<String, Int?> {

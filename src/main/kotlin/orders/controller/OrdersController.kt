@@ -1,7 +1,7 @@
-package com.american.express.orders.controller
+package orders.controller
 
-import com.american.express.orders.model.CalculationResponse
-import com.american.express.orders.service.OrdersService
+import orders.model.CalculationResponse
+import orders.service.OrdersService
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 

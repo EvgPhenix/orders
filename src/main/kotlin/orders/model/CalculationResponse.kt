@@ -1,4 +1,4 @@
-package com.american.express.orders.model
+package orders.model
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import java.io.Serializable

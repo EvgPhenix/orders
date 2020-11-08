@@ -1,9 +1,8 @@
 package orders
 
-import com.american.express.orders.OrdersApplication
-import com.american.express.orders.controller.OrdersController
-import com.american.express.orders.controller.OrdersController.Companion.CALCULATIONS
-import com.american.express.orders.controller.OrdersController.Companion.USER_ID
+import orders.controller.OrdersController
+import orders.controller.OrdersController.Companion.CALCULATIONS
+import orders.controller.OrdersController.Companion.USER_ID
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
