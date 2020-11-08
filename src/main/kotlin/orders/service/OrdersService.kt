@@ -15,13 +15,16 @@ class OrdersService(private val mailClient: MailClient) {
             CalculationResponse("$" + getCalculations(calculationRequest) / 100.0)
 
     fun placeOrder(userId: String, mailAddress: String, calculationRequest: List<String>): String {
-        val outOfStock = false
+        val goodsAggregate = getGoodsDefinition(calculationRequest).filter { mapOffers.containsKey(it.key) } // count valid goods in format {orange=3, apple=2}
+        val outOfStock = isOutOfStock(goodsAggregate)
         val totalCost = getCalc(calculationRequest).totalCost
-        val orderDetails = getGoodsDefinition(calculationRequest).filter { mapOffers.containsKey(it.key) }.toString()
+        val orderDetails = goodsAggregate.toString()
         var result = ""
+        // These things below actually depend on business decisions
         if (!outOfStock) {
             result = mailClient.sendMessage(userId, mailAddress, true, orderDetails, totalCost)
         } else {
+            mailClient.sendMessage(userId, mailAddress, false, orderDetails, totalCost)
             return "These goods are out of stock. Please place another order."
         }
         if (result.equals("Email sent successfully")) {
@@ -30,6 +33,19 @@ class OrdersService(private val mailClient: MailClient) {
         } else {
             return String.format("Dear %s! You placed order that contains [%s] and costs %s. Thank you!",
                     userId, orderDetails, totalCost)
+        }
+    }
+
+    private fun isOutOfStock(goods: Map<String, Int>): Boolean =
+            goods.map { manageStocks(it) }.contains(true)
+
+    private fun manageStocks(entry: Map.Entry<String, Int>): Boolean {
+        if (mapQuantity[entry.key]?.minus(entry.value)!! > 0) {
+            mapQuantity[entry.key]?.minus(entry.value)?.let { mapQuantity.put(entry.key, it) }
+            return false
+        }
+        else {
+            return true
         }
     }
 
@@ -60,6 +76,8 @@ class OrdersService(private val mailClient: MailClient) {
         val mapOffers = mapOf("apple" to 60, "orange" to 25)
         val apple = Apple()
         val orange = Orange()
+        // stocks are here
+        val mapQuantity = mutableMapOf("apple" to 10, "orange" to 11)
     }
 
 }

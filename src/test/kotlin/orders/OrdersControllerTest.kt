@@ -134,7 +134,6 @@ class OrdersControllerTest(@Autowired val mockMvc: MockMvc) {
 				.andDo(print())
 				.andReturn()
 		val expectedResult = "Dear USER_ID! You placed order that contains [{orange=3, apple=2}] and costs \$1.1. We sent you details to my.address@gmail.com"
-		println(response.andReturn().response.getContentAsString(Charset.defaultCharset()))
 		assertEquals(response.andReturn().response.getContentAsString(Charset.defaultCharset()), expectedResult)
 	}
 
@@ -151,7 +150,23 @@ class OrdersControllerTest(@Autowired val mockMvc: MockMvc) {
 				.andDo(print())
 				.andReturn()
 		val expectedResult = "Dear USER_ID! You placed order that contains [{orange=3, apple=2}] and costs \$1.1. Thank you!"
-		println(response.andReturn().response.getContentAsString(Charset.defaultCharset()))
+		assertEquals(response.andReturn().response.getContentAsString(Charset.defaultCharset()), expectedResult)
+	}
+
+	@Test
+	fun `Must not place order with out of stock`() {
+		`when`(mailClient.sendMessage(
+				anyString(), anyString(), anyBoolean(), anyString(), anyString())).thenReturn("Email wasn't sent")
+		val json = "[\"orange\", \"apple\", \"apple\", \"orange\", \"orange\", \"cucumber\", \"apple\", \"apple\", \"apple\"" +
+				", \"apple\", \"apple\", \"apple\", \"apple\", \"apple\"]"
+		val response = mockMvc
+				.perform(post("$ORDERS?mailAddress=my.address@gmail.com").header(USER_ID, USER_ID).contentType(MediaType.APPLICATION_JSON)
+						.content(json))
+		response
+				.andExpect(status().isOk())
+				.andDo(print())
+				.andReturn()
+		val expectedResult = "These goods are out of stock. Please place another order."
 		assertEquals(response.andReturn().response.getContentAsString(Charset.defaultCharset()), expectedResult)
 	}
 }
