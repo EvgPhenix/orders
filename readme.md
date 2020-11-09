@@ -3,8 +3,10 @@
 - git clone git@github.com:evgPhoenix/orders.git
 - mkdir to service directory
 - ./gradlew build
-- java jar (get jar from build directory)
+- cd build/libs
+- java -jar orders_app-4.0.jar(there will be jar)
 - order service is available on port 8080
+- before you check it start https://github.com/evgPhoenix/mailService to send e-mails
 
 #### First iteration (tag v1.0) can do
 

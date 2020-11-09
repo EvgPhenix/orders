@@ -24,18 +24,19 @@ class OrdersService(private val mailClient: MailClient) {
         var result = ""
         // These things below actually depend on business decisions
         if (!outOfStock) {
-                result = sendMailHandler(userId, mailAddress, true, orderDetails, totalCost)
+            result = sendMailHandler(userId, mailAddress, true, orderDetails, totalCost)
+            return if (result.equals("Email sent successfully")) {
+                        String.format("Dear %s! You placed order that contains [%s] and costs %s. We sent you details to %s",
+                                userId, orderDetails, totalCost, mailAddress)
+                    } else {
+                        String.format("Dear %s! You placed order that contains [%s] and costs %s. Thank you!",
+                                userId, orderDetails, totalCost)
+                    }
         } else {
             sendMailHandler(userId, mailAddress, false, orderDetails, totalCost)
             return "These goods are out of stock. Please place another order."
         }
-        if (result.equals("Email sent successfully")) {
-            return String.format("Dear %s! You placed order that contains [%s] and costs %s. We sent you details to %s",
-            userId, orderDetails, totalCost, mailAddress)
-        } else {
-            return String.format("Dear %s! You placed order that contains [%s] and costs %s. Thank you!",
-                    userId, orderDetails, totalCost)
-        }
+
     }
     // this code handle ConnectException if mail sender service isn't available
     private fun sendMailHandler(userId: String, mailAddress: String, isSuccess: Boolean, orderDetails: String, totalCost: String): String {
