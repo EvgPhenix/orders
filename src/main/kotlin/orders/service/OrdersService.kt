@@ -25,7 +25,7 @@ class OrdersService(private val mailClient: MailClient, private val kotlinProduc
         // These things below actually depend on business decisions
         if (!outOfStock) {
             result = sendMailHandler(userId, mailAddress, true, orderDetails, totalCost)
-            return if (result.equals("Email sent successfully")) {
+            return if (result.equals("Email sent successfully") || result.equals("Message sent via message broker")) {
                         String.format("Dear %s! You placed order that contains [%s] and costs %s. We sent you details to %s",
                                 userId, orderDetails, totalCost, mailAddress)
                     } else {
