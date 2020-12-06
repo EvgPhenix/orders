@@ -39,6 +39,7 @@ class OrdersService(private val mailClient: MailClient, private val kotlinProduc
 
     }
     // this code handle ConnectException if mail sender service isn't available
+    // TODO add config than enables kafka or simple http requests to send e-mails
     private fun sendMailHandler(userId: String, mailAddress: String, isSuccess: Boolean, orderDetails: String, totalCost: String): String {
         var result = ""
         try {
