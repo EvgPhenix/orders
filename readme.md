@@ -39,5 +39,15 @@
 
 - Placing orders with managing stocks (by default there are 10 apples and 11 oranges)
 - curl -X GET http://localhost:8080/orders?mailAddress=some.address@gmail.com -H 'USER_ID: John Doe' d '["orange", "apple", "apple", "orange", "orange"]' -H 'Content-Type: application/json'
-- if goods are aout of stocks the server will notify you in answer and by e-mail
+- if goods are out of stocks the server will notify you in answer and by e-mail
 - Unit tests has added
+
+#### Fifth iteration (tag v5.0) can do
+
+- All the same things but with Apache Kafka message broker
+- If mail sender service is unavailable, the message will be in the queue until it would be started.
+- to start Message queue use docker-compose file, before You need to download Kafka and Zookeeper docker image
+    from Docker hub (for example via link `https://hub.docker.com/u/wurstmeister`)
+- then use commands `docker-compose up -d`
+- now start the application and follow the steps described in previous iterations
+- if the queue is unavailable the service will try to send the message to message service via http.

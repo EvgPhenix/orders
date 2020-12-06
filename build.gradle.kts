@@ -28,6 +28,10 @@ dependencies {
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+
+	// kafka
+	implementation("org.springframework.kafka:spring-kafka")
+
 	runtimeOnly("com.h2database:h2")
 	runtimeOnly("org.springframework.boot:spring-boot-devtools")
 	kapt("org.springframework.boot:spring-boot-configuration-processor")
@@ -37,6 +41,10 @@ dependencies {
 	testImplementation("org.junit.jupiter:junit-jupiter-api")
 	testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 	testImplementation("com.ninja-squad:springmockk:1.1.3")
+
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	testImplementation("org.springframework.kafka:spring-kafka-test")
+	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 }
 
 tasks.withType<KotlinCompile> {

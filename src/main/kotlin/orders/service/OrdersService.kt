@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import java.net.ConnectException
 
 @Service
-class OrdersService(private val mailClient: MailClient) {
+class OrdersService(private val mailClient: MailClient, private val kotlinProducer: KotlinProducer) {
 
     fun getOffers() = getOffersMap().map { it.key + ": " + it.value.description }
 
@@ -42,7 +42,13 @@ class OrdersService(private val mailClient: MailClient) {
     private fun sendMailHandler(userId: String, mailAddress: String, isSuccess: Boolean, orderDetails: String, totalCost: String): String {
         var result = ""
         try {
-            result = mailClient.sendMessage(userId, mailAddress, isSuccess, orderDetails, totalCost)
+            try {
+                kotlinProducer.send(String.format("{\"userId\": \"%s\", \"mailAddress\": \"%s\", \"isSuccess\": \"%s\", \"orderDetails\": \"%s\", \"totalCost\": \"%s\"}",
+                userId, mailAddress, isSuccess, orderDetails, totalCost))
+                result = "Message sent via message broker"
+            } catch (e: Exception) {
+                result = mailClient.sendMessage(userId, mailAddress, isSuccess, orderDetails, totalCost)
+            }
         } catch (e: ConnectException) {
            e.printStackTrace()
         } finally {
